@@ -1,1 +1,1 @@
-"# starstream" 
+Interesting visual demo that shows stars streaking across the sky
