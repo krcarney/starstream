@@ -8,7 +8,7 @@ public class StarSpawner : MonoBehaviour
     public GameObject star;
     public static int starsOnScreen;
     Vector3 camera_point;
-    Camera cam;
+    Camera cam = Camera.main;
     static Color blueStar = new Color(0.1803f, 0.7137255f, 0.9254903f);
     static Color orgStar = new Color(0.9245283f, 0.554f, 0.364f);
 
@@ -16,9 +16,23 @@ public class StarSpawner : MonoBehaviour
     {
         public Color starColor;
         public Vector3 spawnpoint;
-        public float speed;
+        public Vector2 speed;
         public GameObject starPrefab = Resources.Load<GameObject>("Prefabs/star");
-        public Star(Vector3 aSpawnpoint, Color aStarColor, float aSpeed)
+
+        public Star()
+        {
+            starColor = SelectColor();
+            spawnpoint = SelectSpawnPosition();
+            speed = SelectSpeed();
+        }
+
+        public Star(Vector3 aSpawnpoint, Vector2 aSpeed)
+        {
+            spawnpoint = aSpawnpoint;
+            speed = aSpeed;
+        }
+
+        public Star(Vector3 aSpawnpoint, Vector2 aSpeed, Color aStarColor)
         {
             starColor = aStarColor;
             spawnpoint = aSpawnpoint;
@@ -28,6 +42,41 @@ public class StarSpawner : MonoBehaviour
         public void Create()
         {
             Instantiate(starPrefab, spawnpoint, Quaternion.identity);
+        }
+
+        // grabs a random spawnpoint at the bottom of the screen
+        public Vector3 SelectSpawnPosition()
+        {
+            float x = Random.Range(0.0f, 1.0f);
+            Vector3 spawn = Camera.main.ViewportToWorldPoint(new Vector3(x, 0.0f, 0.0f));
+            spawn = spawn + new Vector3(0f, 0f, 10f);
+            return spawn;
+        }
+
+        // grab either a blue or orange color for the star
+        public Color SelectColor()
+        {
+            int colorChangeIndicator = Random.Range(0, 100);
+            float alpha = Random.Range(0.15f, 1.0f);
+            if (colorChangeIndicator <= 5)
+            {
+                orgStar.a = alpha;
+                return orgStar;
+            }
+            else
+            {
+                blueStar.a = alpha;
+                return blueStar;
+            }
+        }
+
+        // select a speed for a star
+        public Vector2 SelectSpeed()
+        {
+            float minSpeed = 2.5f;
+            float maxSpeed = 10f;
+            float speed = Random.Range(minSpeed, maxSpeed);
+            return new Vector2(0f, speed);
         }
     }
 
@@ -39,49 +88,13 @@ public class StarSpawner : MonoBehaviour
         StartCoroutine(Launch());
     }
 
-    public void SpawnStar(Star spawn)
-    {
-        Vector3 spawnpoint = spawn;
-        Instantiate(star, spawnpoint, Quaternion.identity);
-        Debug.Log("Star created");
-        starsOnScreen += 1;
-    }
-
-    // grabs a random spawnpoint at the bottom of the screen
-    public Vector3 SelectSpawnPosition()
-    {
-        float x = Random.Range(0.0f, 1.0f);
-        Vector3 spawn = cam.ViewportToWorldPoint(new Vector3(x, 0.0f, 0.0f));
-        spawn = spawn + new Vector3(0f, 0f, 10f);
-        return spawn;
-    }
-
-
-    public Color SelectColor()
-    {
-        int colorChangeIndicator = Random.Range(0, 100);
-        float alpha = Random.Range(0.15f, 1.0f);
-        if (colorChangeIndicator <= 5)
-        {
-            orgStar.a = alpha;
-            return orgStar;
-        }
-        else
-        {
-            blueStar.a = alpha;
-            return blueStar;
-        }
-    }
-
-    public float SelectSpeed()
-    {
-        float minSpeed = 2.5f;
-        float maxSpeed = 10f;
-        return Random.Range(minSpeed, maxSpeed);
-    }
-
-
-
+    //public void SpawnStar(Star star)
+    //{
+    //    Vector3 spawnpoint = spawn;
+    //    Instantiate(star, spawnpoint, Quaternion.identity);
+    //    Debug.Log("Star created");
+    //    starsOnScreen += 1;
+    //}
 
     public IEnumerator Launch()
     {
@@ -95,7 +108,7 @@ public class StarSpawner : MonoBehaviour
 
             while (i < numOfStars)
             {
-                Star newStar = new Star(SelectSpawnPosition(), SelectColor(), SelectSpeed());
+                Star newStar = new Star();
                 newStar.Create();
             }
         }
