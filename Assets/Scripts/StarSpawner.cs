@@ -8,9 +8,6 @@ public class StarSpawner : MonoBehaviour
     public GameObject star;
     public static int starsOnScreen;
     Vector3 camera_point;
-    Camera cam = Camera.main;
-    static Color blueStar = new Color(0.1803f, 0.7137255f, 0.9254903f);
-    static Color orgStar = new Color(0.9245283f, 0.554f, 0.364f);
 
     public class Star
     {
@@ -39,23 +36,21 @@ public class StarSpawner : MonoBehaviour
             speed = aSpeed;
         }
 
-        public void Create()
-        {
-            Instantiate(starPrefab, spawnpoint, Quaternion.identity);
-        }
-
         // grabs a random spawnpoint at the bottom of the screen
         public Vector3 SelectSpawnPosition()
         {
             float x = Random.Range(0.0f, 1.0f);
             Vector3 spawn = Camera.main.ViewportToWorldPoint(new Vector3(x, 0.0f, 0.0f));
-            spawn = spawn + new Vector3(0f, 0f, 10f);
+            spawn += new Vector3(0f, 0f, 10f);
             return spawn;
         }
 
         // grab either a blue or orange color for the star
         public Color SelectColor()
         {
+            Color blueStar = new Color(0.1803f, 0.7137255f, 0.9254903f);
+            Color orgStar = new Color(0.9245283f, 0.554f, 0.364f); ;
+
             int colorChangeIndicator = Random.Range(0, 100);
             float alpha = Random.Range(0.15f, 1.0f);
             if (colorChangeIndicator <= 5)
@@ -83,7 +78,7 @@ public class StarSpawner : MonoBehaviour
     // Use this for initialization
     void Awake ()
     {
-        cam = Camera.main;
+        Camera cam = Camera.main;
         camera_point = cam.transform.position;
         StartCoroutine(Launch());
     }
@@ -109,7 +104,7 @@ public class StarSpawner : MonoBehaviour
             while (i < numOfStars)
             {
                 Star newStar = new Star();
-                newStar.Create();
+                Instantiate(newStar.starPrefab, newStar.spawnpoint, Quaternion.identity);
             }
         }
     }

@@ -15,6 +15,7 @@ public class StarController : MonoBehaviour
     // Use this for initialization
     void Awake ()
     {
+
         // wake up and create an associated star object
         StarSpawner.Star star = new StarSpawner.Star();
         tf = GetComponent<Transform>();
@@ -27,7 +28,9 @@ public class StarController : MonoBehaviour
 
         // grab velocity from the object
         this.GetComponent<Rigidbody2D>().velocity = star.speed;
-        
+
+        Debug.Log("added new star at point " + tf.position);
+
         // set colors for beginning and end of trail
         trailColor = star.starColor;
         trailColor.a -= 0.1f;
